@@ -15,30 +15,30 @@ fetch(API_URL)
 .then(res => res.json())
 .then(data => {
 
-console.log("RAW DATA:", data);
+console.log("RAW API:", data);
 
-// CLEAN + NORMALIZE DATA
-rawData = data.map(item => {
+// 🔥 กัน API ไม่ใช่ array
+if (!Array.isArray(data)) {
+data = data.data || [];
+}
 
-return {
-date:
-item["วันที่บันทึก"] ||
-item["ประทับเวลา"] ||
-item["วันที่บันทึก"] ||
-"",
+rawData = data.map(item => ({
 
+date: item["วันที่บันทึก"] || item["ประทับเวลา"] || "",
 teacher: item["อาจารย์"] || "",
 type: item["Waste type"] || "",
-
 amount: Number(item["Amount"] || 0),
 liter: Number(item["Container"] || 0)
 
-};
-
-});
+}));
 
 renderDashboard(rawData);
 
+})
+.catch(err => {
+console.error("API ERROR:", err);
+document.body.innerHTML =
+"<h2 style='color:red'>โหลดข้อมูลไม่สำเร็จ</h2>";
 });
 
 
