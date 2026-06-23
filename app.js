@@ -12,7 +12,7 @@ fetch(API_URL)
 rawData = data.map(item => {
 
 return {
-date: item["วันที่บันทึก"] || item[" วันที่บันทึก  "] || "",
+date: item["วันที่บันทึก"] || item["วันที่บันทึก"] || "",
 teacher: item["อาจารย์"] || "",
 type: item["Waste type"] || "",
 amount: Number(item["Amount"] || 0),
