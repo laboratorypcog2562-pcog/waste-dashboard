@@ -4,14 +4,13 @@
 <head>
 
 <meta charset="UTF-8">
+<title>Waste Dashboard</title>
 
-<title>
-Waste Dashboard
-</title>
-
-
+<!-- CSS -->
 <link rel="stylesheet" href="style.css">
 
+<!-- Chart.js (สำคัญสำหรับกราฟ) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
@@ -19,109 +18,85 @@ Waste Dashboard
 <body>
 
 
-<h1>
-Waste Management Dashboard
-</h1>
+<h1>Waste Management Dashboard</h1>
 
 
+<!-- KPI CARDS -->
 <div class="cards">
 
 
 <div class="card">
-<h3>
-Total Waste
-</h3>
-
-<p id="totalLiter">
-0 L
-</p>
-
+<h3>Total Waste</h3>
+<p id="totalLiter">0 L</p>
 </div>
-
 
 
 <div class="card">
-
-<h3>
-Containers
-</h3>
-
-<p id="totalContainer">
-0 ถัง
-</p>
-
+<h3>Containers</h3>
+<p id="totalContainer">0 ถัง</p>
 </div>
-
 
 
 <div class="card">
-
-<h3>
-Records
-</h3>
-
-<p id="totalRecord">
-0
-</p>
-
+<h3>Records</h3>
+<p id="totalRecord">0</p>
 </div>
 
 
 </div>
 
 
-<h2>
-Waste Data
-</h2>
 
+<!-- FILTER (รองรับอนาคต 1-3-6 เดือน) -->
+<div style="text-align:center; margin-top:20px;">
+
+<button onclick="filterData(30)">1 เดือน</button>
+<button onclick="filterData(90)">3 เดือน</button>
+<button onclick="filterData(180)">6 เดือน</button>
+<button onclick="filterData('all')">ทั้งหมด</button>
+
+</div>
+
+
+
+<!-- CHART SECTION -->
+<h2>Waste Type Chart</h2>
+<canvas id="typeChart"></canvas>
+
+
+<h2>Teacher Chart</h2>
+<canvas id="teacherChart"></canvas>
+
+
+
+<!-- TABLE -->
+<h2>Waste Data</h2>
 
 <table>
-
 
 <thead>
 
 <tr>
-
-<th>
-วันที่
-</th>
-
-<th>
-อาจารย์
-</th>
-
-<th>
-Waste Type
-</th>
-
-<th>
-Amount
-</th>
-
-<th>
-Liter
-</th>
-
-
+<th>วันที่</th>
+<th>อาจารย์</th>
+<th>Waste Type</th>
+<th>Amount</th>
+<th>Liter</th>
 </tr>
-
 
 </thead>
 
 
 <tbody id="tableData">
-
-
 </tbody>
-
 
 </table>
 
 
 
+<!-- SCRIPT -->
 <script src="app.js"></script>
 
 
 </body>
-
 </html>
