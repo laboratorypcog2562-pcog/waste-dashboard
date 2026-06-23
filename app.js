@@ -8,6 +8,7 @@ fetch(API_URL)
 .then(res => res.json())
 .then(data => {
 
+// ✅ CLEAN + NORMALIZE DATA
 rawData = data.map(item => {
 
 return {
@@ -26,8 +27,9 @@ renderDashboard(rawData);
 
 });
 
+
 // ===============================
-// RENDER DASHBOARD
+// DASHBOARD
 // ===============================
 function renderDashboard(data){
 
@@ -36,11 +38,8 @@ let totalLiter = 0;
 
 data.forEach(item => {
 
-let amount = Number(item.Amount || 0);
-let liter = Number(item.Total_Liter || 0);
-
-totalContainer += amount;
-totalLiter += liter;
+totalContainer += item.amount;
+totalLiter += item.liter;
 
 });
 
@@ -54,6 +53,7 @@ totalLiter + " L";
 document.getElementById("totalRecord").innerText =
 data.length;
 
+
 // TABLE
 let html = "";
 
@@ -61,17 +61,18 @@ data.forEach(item => {
 
 html += `
 <tr>
-<td>${item["วันที่บันทึก"]}</td>
-<td>${item["อาจารย์"]}</td>
-<td>${item["Waste type"]}</td>
-<td>${item.Amount}</td>
-<td>${item.Total_Liter}</td>
+<td>${item.date}</td>
+<td>${item.teacher}</td>
+<td>${item.type}</td>
+<td>${item.amount}</td>
+<td>${item.liter}</td>
 </tr>
 `;
 
 });
 
 document.getElementById("tableData").innerHTML = html;
+
 
 // CHARTS
 buildCharts(data);
@@ -87,45 +88,38 @@ let teacherChart;
 
 function buildCharts(data){
 
-// ---- Waste Type ----
 let typeMap = {};
+let teacherMap = {};
 
+// group data
 data.forEach(item => {
 
-let type = item["Waste type"];
-let amount = Number(item.Amount || 0);
+// Waste Type
+typeMap[item.type] =
+(typeMap[item.type] || 0) + item.amount;
 
-typeMap[type] = (typeMap[type] || 0) + amount;
+// Teacher
+teacherMap[item.teacher] =
+(teacherMap[item.teacher] || 0) + item.amount;
 
 });
 
 let typeLabels = Object.keys(typeMap);
 let typeValues = Object.values(typeMap);
 
-
-// ---- Teacher ----
-let teacherMap = {};
-
-data.forEach(item => {
-
-let t = item["อาจารย์"];
-let amount = Number(item.Amount || 0);
-
-teacherMap[t] = (teacherMap[t] || 0) + amount;
-
-});
-
 let teacherLabels = Object.keys(teacherMap);
 let teacherValues = Object.values(teacherMap);
 
 
-// ---- Destroy old chart (กัน error) ----
+// destroy old chart
 if(typeChart) typeChart.destroy();
 if(teacherChart) teacherChart.destroy();
 
 
-// ---- Waste Type Chart ----
-typeChart = new Chart(document.getElementById("typeChart"), {
+// Waste Type Chart
+typeChart = new Chart(
+document.getElementById("typeChart"),
+{
 type: "bar",
 data: {
 labels: typeLabels,
@@ -134,11 +128,14 @@ label: "Waste (ถัง)",
 data: typeValues
 }]
 }
-});
+}
+);
 
 
-// ---- Teacher Chart ----
-teacherChart = new Chart(document.getElementById("teacherChart"), {
+// Teacher Chart
+teacherChart = new Chart(
+document.getElementById("teacherChart"),
+{
 type: "bar",
 data: {
 labels: teacherLabels,
@@ -147,13 +144,14 @@ label: "Waste (ถัง)",
 data: teacherValues
 }]
 }
-});
+}
+);
 
 }
 
 
 // ===============================
-// FILTER SYSTEM (1-3-6 เดือน)
+// FILTER (1-3-6 เดือน)
 // ===============================
 function filterData(days){
 
@@ -166,7 +164,7 @@ let now = new Date();
 
 let filtered = rawData.filter(item => {
 
-let d = new Date(item["วันที่บันทึก"]);
+let d = new Date(item.date);
 
 let diff = (now - d) / (1000 * 60 * 60 * 24);
 
