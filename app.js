@@ -2,24 +2,29 @@ const API_URL =
 "ใส่ URL Google Apps Script ของคุณตรงนี้";
 
 let rawData = [];
+let filteredData = [];
 
+// โหลดข้อมูล
 fetch(API_URL)
 .then(res => res.json())
 .then(data => {
 
 rawData = data;
+filteredData = data;
 
 renderDashboard(data);
 
 });
 
 
+// ===============================
+// RENDER DASHBOARD
+// ===============================
 function renderDashboard(data){
 
 let totalContainer = 0;
 let totalLiter = 0;
 
-// รวมค่า
 data.forEach(item => {
 
 let amount = Number(item.Amount || 0);
@@ -40,7 +45,6 @@ totalLiter + " L";
 document.getElementById("totalRecord").innerText =
 data.length;
 
-
 // TABLE
 let html = "";
 
@@ -60,12 +64,21 @@ html += `
 
 document.getElementById("tableData").innerHTML = html;
 
-
-// ทำกราฟ
+// CHARTS
 buildCharts(data);
-  function buildCharts(data){
 
-// ===== Waste Type =====
+}
+
+
+// ===============================
+// CHARTS
+// ===============================
+let typeChart;
+let teacherChart;
+
+function buildCharts(data){
+
+// ---- Waste Type ----
 let typeMap = {};
 
 data.forEach(item => {
@@ -81,7 +94,7 @@ let typeLabels = Object.keys(typeMap);
 let typeValues = Object.values(typeMap);
 
 
-// ===== Teacher =====
+// ---- Teacher ----
 let teacherMap = {};
 
 data.forEach(item => {
@@ -97,10 +110,13 @@ let teacherLabels = Object.keys(teacherMap);
 let teacherValues = Object.values(teacherMap);
 
 
-// ===== Charts =====
+// ---- Destroy old chart (กัน error) ----
+if(typeChart) typeChart.destroy();
+if(teacherChart) teacherChart.destroy();
 
-// Waste Type Chart
-new Chart(document.getElementById("typeChart"), {
+
+// ---- Waste Type Chart ----
+typeChart = new Chart(document.getElementById("typeChart"), {
 type: "bar",
 data: {
 labels: typeLabels,
@@ -112,8 +128,8 @@ data: typeValues
 });
 
 
-// Teacher Chart
-new Chart(document.getElementById("teacherChart"), {
+// ---- Teacher Chart ----
+teacherChart = new Chart(document.getElementById("teacherChart"), {
 type: "bar",
 data: {
 labels: teacherLabels,
@@ -125,5 +141,30 @@ data: teacherValues
 });
 
 }
+
+
+// ===============================
+// FILTER SYSTEM (1-3-6 เดือน)
+// ===============================
+function filterData(days){
+
+if(days === "all"){
+renderDashboard(rawData);
+return;
+}
+
+let now = new Date();
+
+let filtered = rawData.filter(item => {
+
+let d = new Date(item["วันที่บันทึก"]);
+
+let diff = (now - d) / (1000 * 60 * 60 * 24);
+
+return diff <= days;
+
+});
+
+renderDashboard(filtered);
 
 }
