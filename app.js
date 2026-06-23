@@ -1,27 +1,41 @@
+
 const API_URL =
 "https://script.google.com/macros/s/AKfycbw7VC81TVJe6pW90ydBku8ecifIPBk3FGo3yhtnpRwFV_SKpNBk4b2bs9X101sw3NUa/exec";
 
 let rawData = [];
 let filteredData = [];
 
+let typeChart;
+let teacherChart;
+
+// ===============================
+// FETCH DATA
+// ===============================
 fetch(API_URL)
 .then(res => res.json())
 .then(data => {
 
-// ✅ CLEAN + NORMALIZE DATA
+console.log("RAW DATA:", data);
+
+// CLEAN + NORMALIZE DATA
 rawData = data.map(item => {
 
 return {
-date: item["วันที่บันทึก"] || item["วันที่บันทึก"] || "",
+date:
+item["วันที่บันทึก"] ||
+item["ประทับเวลา"] ||
+item[" วันที่บันทึก "] ||
+"",
+
 teacher: item["อาจารย์"] || "",
 type: item["Waste type"] || "",
+
 amount: Number(item["Amount"] || 0),
-liter: Number(item["Total_Liter"] || item["Container"] || 0)
+liter: Number(item["Container"] || 0)
+
 };
 
 });
-
-filteredData = rawData;
 
 renderDashboard(rawData);
 
@@ -36,15 +50,15 @@ function renderDashboard(data){
 let totalContainer = 0;
 let totalLiter = 0;
 
+// KPI CALC
 data.forEach(item => {
 
 totalContainer += item.amount;
-
-// 🔥 สำคัญ: คิดเป็นลิตรจริง
-totalLiter += (item.amount * item.liter);
+totalLiter += item.amount * item.liter;
 
 });
-// KPI
+
+// KPI DISPLAY
 document.getElementById("totalContainer").innerText =
 totalContainer + " ถัง";
 
@@ -76,66 +90,83 @@ document.getElementById("tableData").innerHTML = html;
 
 
 // CHARTS
+buildCharts(data);
+
+}
+
+
+// ===============================
+// CHARTS
+// ===============================
 function buildCharts(data){
 
 let typeMap = {};
 let teacherMap = {};
 
+// GROUP DATA
 data.forEach(item => {
 
 if(item.type){
-typeMap[item.type] = (typeMap[item.type] || 0) + item.amount;
+typeMap[item.type] =
+(typeMap[item.type] || 0) + item.amount;
 }
 
 if(item.teacher){
-teacherMap[item.teacher] = (teacherMap[item.teacher] || 0) + item.amount;
+teacherMap[item.teacher] =
+(teacherMap[item.teacher] || 0) + item.amount;
 }
 
 });
 
-// เรียงมาก → น้อย (สำคัญมากสำหรับผู้บริหาร)
+
+// SORT (สำคัญสำหรับผู้บริหาร)
 let typeSorted = Object.entries(typeMap)
 .sort((a,b)=>b[1]-a[1]);
 
 let teacherSorted = Object.entries(teacherMap)
 .sort((a,b)=>b[1]-a[1]);
 
-let typeLabels = typeSorted.map(i=>i[0]);
-let typeValues = typeSorted.map(i=>i[1]);
 
-let teacherLabels = teacherSorted.map(i=>i[0]);
-let teacherValues = teacherSorted.map(i=>i[1]);
-
+// DESTROY OLD CHART
 if(typeChart) typeChart.destroy();
 if(teacherChart) teacherChart.destroy();
 
-// Waste Type (Pie chart → อ่านง่ายขึ้น)
-typeChart = new Chart(document.getElementById("typeChart"), {
+
+// WASTE TYPE (PIE)
+typeChart = new Chart(
+document.getElementById("typeChart"),
+{
 type: "pie",
 data: {
-labels: typeLabels,
+labels: typeSorted.map(i=>i[0]),
 datasets: [{
-label: "Waste (ถัง)",
-data: typeValues
+data: typeSorted.map(i=>i[1])
 }]
 }
-});
+}
+);
 
-// Teacher (Bar chart)
-teacherChart = new Chart(document.getElementById("teacherChart"), {
+
+// TEACHER (BAR)
+teacherChart = new Chart(
+document.getElementById("teacherChart"),
+{
 type: "bar",
 data: {
-labels: teacherLabels,
+labels: teacherSorted.map(i=>i[0]),
 datasets: [{
 label: "Waste (ถัง)",
-data: teacherValues
+data: teacherSorted.map(i=>i[1])
 }]
 }
-});
+}
+);
 
 }
+
+
 // ===============================
-// FILTER (1-3-6 เดือน)
+// FILTER SYSTEM (1 / 3 / 6 MONTHS)
 // ===============================
 function filterData(days){
 
