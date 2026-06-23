@@ -63,5 +63,67 @@ document.getElementById("tableData").innerHTML = html;
 
 // ทำกราฟ
 buildCharts(data);
+  function buildCharts(data){
+
+// ===== Waste Type =====
+let typeMap = {};
+
+data.forEach(item => {
+
+let type = item["Waste type"];
+let amount = Number(item.Amount || 0);
+
+typeMap[type] = (typeMap[type] || 0) + amount;
+
+});
+
+let typeLabels = Object.keys(typeMap);
+let typeValues = Object.values(typeMap);
+
+
+// ===== Teacher =====
+let teacherMap = {};
+
+data.forEach(item => {
+
+let t = item["อาจารย์"];
+let amount = Number(item.Amount || 0);
+
+teacherMap[t] = (teacherMap[t] || 0) + amount;
+
+});
+
+let teacherLabels = Object.keys(teacherMap);
+let teacherValues = Object.values(teacherMap);
+
+
+// ===== Charts =====
+
+// Waste Type Chart
+new Chart(document.getElementById("typeChart"), {
+type: "bar",
+data: {
+labels: typeLabels,
+datasets: [{
+label: "Waste (ถัง)",
+data: typeValues
+}]
+}
+});
+
+
+// Teacher Chart
+new Chart(document.getElementById("teacherChart"), {
+type: "bar",
+data: {
+labels: teacherLabels,
+datasets: [{
+label: "Waste (ถัง)",
+data: teacherValues
+}]
+}
+});
+
+}
 
 }
