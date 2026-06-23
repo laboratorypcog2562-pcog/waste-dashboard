@@ -1,9 +1,8 @@
+
 const API_URL =
 "https://script.google.com/macros/s/AKfycbw7VC81TVJe6pW90ydBku8ecifIPBk3FGo3yhtnpRwFV_SKpNBk4b2bs9X101sw3NUa/exec";
 
 let rawData = [];
-let filteredData = [];
-
 let typeChart;
 let teacherChart;
 
@@ -16,7 +15,7 @@ fetch(API_URL)
 
 console.log("RAW API:", data);
 
-// 🔥 กัน API ไม่ใช่ array
+// safe fallback
 if (!Array.isArray(data)) {
 data = data.data || [];
 }
@@ -39,34 +38,34 @@ console.error("API ERROR:", err);
 document.body.innerHTML =
 "<h2 style='color:red'>โหลดข้อมูลไม่สำเร็จ</h2>";
 });
-if (!data || data.length === 0) {
-document.getElementById("tableData").innerHTML =
-"<tr><td colspan='5'>ไม่มีข้อมูล</td></tr>";
-return;
-}
+
 
 // ===============================
 // DASHBOARD
 // ===============================
 function renderDashboard(data){
 
+if (!data || data.length === 0) {
+document.getElementById("tableData").innerHTML =
+"<tr><td colspan='5'>ไม่มีข้อมูล</td></tr>";
+return;
+}
+
 let totalContainer = 0;
 let totalLiter = 0;
 
 // KPI CALC
 data.forEach(item => {
-
 totalContainer += item.amount;
 totalLiter += item.amount * item.liter;
-
 });
 
 // KPI DISPLAY
 document.getElementById("totalContainer").innerText =
-totalContainer + "ถัง";
+totalContainer + " ถัง";
 
 document.getElementById("totalLiter").innerText =
-totalLiter + "L";
+totalLiter + " L";
 
 document.getElementById("totalRecord").innerText =
 data.length;
@@ -76,20 +75,16 @@ data.length;
 let teacherMap = {};
 
 data.forEach(item => {
-
 let name = item.teacher || "ไม่ระบุ";
 
 teacherMap[name] =
 (teacherMap[name] || 0) + item.amount;
-
 });
 
 let topTeachers = Object.entries(teacherMap)
 .sort((a,b)=>b[1]-a[1])
 .slice(0,5);
 
-
-// HTML OUTPUT
 let topHTML = "<h3>🏆 Top 5 อาจารย์</h3><ol>";
 
 topTeachers.forEach(t => {
@@ -98,13 +93,9 @@ topHTML += `<li>${t[0]} - ${t[1]} ถัง</li>`;
 
 topHTML += "</ol>";
 
-// ต้องมี div นี้ใน HTML
 document.getElementById("topBox").innerHTML = topHTML;
 
 
-// 👉 สำคัญ: ต้องเรียก chart ต่อท้าย
-buildCharts(data);
-}
 // TABLE
 let html = "";
 
@@ -139,7 +130,6 @@ function buildCharts(data){
 let typeMap = {};
 let teacherMap = {};
 
-// GROUP DATA
 data.forEach(item => {
 
 if(item.type){
@@ -154,24 +144,16 @@ teacherMap[item.teacher] =
 
 });
 
-
-// SORT (สำคัญสำหรับผู้บริหาร)
 let typeSorted = Object.entries(typeMap)
 .sort((a,b)=>b[1]-a[1]);
 
 let teacherSorted = Object.entries(teacherMap)
 .sort((a,b)=>b[1]-a[1]);
 
-
-// DESTROY OLD CHART
 if(typeChart) typeChart.destroy();
 if(teacherChart) teacherChart.destroy();
 
-
-// WASTE TYPE (PIE)
-typeChart = new Chart(
-document.getElementById("typeChart"),
-{
+typeChart = new Chart(document.getElementById("typeChart"), {
 type: "pie",
 data: {
 labels: typeSorted.map(i=>i[0]),
@@ -179,14 +161,9 @@ datasets: [{
 data: typeSorted.map(i=>i[1])
 }]
 }
-}
-);
+});
 
-
-// TEACHER (BAR)
-teacherChart = new Chart(
-document.getElementById("teacherChart"),
-{
+teacherChart = new Chart(document.getElementById("teacherChart"), {
 type: "bar",
 data: {
 labels: teacherSorted.map(i=>i[0]),
@@ -195,14 +172,13 @@ label: "Waste (ถัง)",
 data: teacherSorted.map(i=>i[1])
 }]
 }
-}
-);
+});
 
 }
 
 
 // ===============================
-// FILTER SYSTEM (1 / 3 / 6 MONTHS)
+// FILTER SYSTEM
 // ===============================
 function filterData(days){
 
