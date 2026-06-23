@@ -145,6 +145,8 @@ let filtered = rawData.filter(item => {
 
 let d = new Date(item.date);
 
+if(!d.getTime()) return false;
+
 let diff = (now - d) / (1000 * 60 * 60 * 24);
 
 return diff <= days;
