@@ -24,7 +24,7 @@ return {
 date:
 item["วันที่บันทึก"] ||
 item["ประทับเวลา"] ||
-item[" วันที่บันทึก "] ||
+item["วันที่บันทึก"] ||
 "",
 
 teacher: item["อาจารย์"] || "",
@@ -60,7 +60,7 @@ totalLiter += item.amount * item.liter;
 
 // KPI DISPLAY
 document.getElementById("totalContainer").innerText =
-totalContainer + " ถัง";
+totalContainer + "ถัง";
 
 document.getElementById("totalLiter").innerText =
 totalLiter + " L";
