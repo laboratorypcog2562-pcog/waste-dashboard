@@ -2,53 +2,42 @@
 <html lang="th">
 
 <head>
-
 <meta charset="UTF-8">
 <title>Waste Dashboard</title>
 
-<!-- CSS -->
 <link rel="stylesheet" href="style.css">
 
-<!-- Chart.js (สำคัญสำหรับกราฟ) -->
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
-
 <body>
-
 
 <h1>Waste Management Dashboard</h1>
 
-
-<!-- KPI CARDS -->
+<!-- ================= KPI ================= -->
 <div class="cards">
-
 
 <div class="card">
 <h3>Total Waste</h3>
 <p id="totalLiter">0 L</p>
 </div>
 
-
 <div class="card">
 <h3>Containers</h3>
 <p id="totalContainer">0 ถัง</p>
 </div>
-
 
 <div class="card">
 <h3>Records</h3>
 <p id="totalRecord">0</p>
 </div>
 
-
 </div>
 
-
-
-<!-- FILTER (รองรับอนาคต 1-3-6 เดือน) -->
-<div style="text-align:center; margin-top:20px;">
+<!-- ================= FILTER ================= -->
+<div style="text-align:center; margin:20px;">
 
 <button onclick="filterData(30)">1 เดือน</button>
 <button onclick="filterData(90)">3 เดือน</button>
@@ -57,46 +46,36 @@
 
 </div>
 
-
-
-<!-- CHART SECTION -->
-<h2>Waste Type Chart</h2>
+<!-- ================= CHARTS ================= -->
+<h2>Waste Type (ภาพรวมประเภทของเสีย)</h2>
 <canvas id="typeChart"></canvas>
 
-
-<h2>Teacher Chart</h2>
+<h2>Teacher Ranking (ผู้สร้าง Waste)</h2>
 <canvas id="teacherChart"></canvas>
 
-
-
-<!-- TABLE -->
+<!-- ================= TABLE ================= -->
 <h2>Waste Data</h2>
 
-<table>
+<table border="1" width="100%" cellspacing="0" cellpadding="5">
 
-<thead>
+<thead style="background:#eee;">
 
 <tr>
 <th>วันที่</th>
 <th>อาจารย์</th>
 <th>Waste Type</th>
-<th>Amount</th>
-<th>Liter</th>
+<th>Amount (ถัง)</th>
+<th>Liter/ถัง</th>
 </tr>
 
 </thead>
 
-
-<tbody id="tableData">
-</tbody>
+<tbody id="tableData"></tbody>
 
 </table>
 
-
-
-<!-- SCRIPT -->
+<!-- ================= SCRIPT ================= -->
 <script src="app.js"></script>
-
 
 </body>
 </html>
