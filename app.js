@@ -39,10 +39,11 @@ let totalLiter = 0;
 data.forEach(item => {
 
 totalContainer += item.amount;
-totalLiter += item.liter;
+
+// 🔥 สำคัญ: คิดเป็นลิตรจริง
+totalLiter += (item.amount * item.liter);
 
 });
-
 // KPI
 document.getElementById("totalContainer").innerText =
 totalContainer + " ถัง";
@@ -75,32 +76,20 @@ document.getElementById("tableData").innerHTML = html;
 
 
 // CHARTS
-buildCharts(data);
-
-}
-
-
-// ===============================
-// CHARTS
-// ===============================
-let typeChart;
-let teacherChart;
-
 function buildCharts(data){
 
 let typeMap = {};
 let teacherMap = {};
 
-// group data
 data.forEach(item => {
 
-// Waste Type
-typeMap[item.type] =
-(typeMap[item.type] || 0) + item.amount;
+if(item.type){
+typeMap[item.type] = (typeMap[item.type] || 0) + item.amount;
+}
 
-// Teacher
-teacherMap[item.teacher] =
-(teacherMap[item.teacher] || 0) + item.amount;
+if(item.teacher){
+teacherMap[item.teacher] = (teacherMap[item.teacher] || 0) + item.amount;
+}
 
 });
 
@@ -110,16 +99,12 @@ let typeValues = Object.values(typeMap);
 let teacherLabels = Object.keys(teacherMap);
 let teacherValues = Object.values(teacherMap);
 
-
 // destroy old chart
 if(typeChart) typeChart.destroy();
 if(teacherChart) teacherChart.destroy();
 
-
-// Waste Type Chart
-typeChart = new Chart(
-document.getElementById("typeChart"),
-{
+// Waste Type
+typeChart = new Chart(document.getElementById("typeChart"), {
 type: "bar",
 data: {
 labels: typeLabels,
@@ -128,14 +113,10 @@ label: "Waste (ถัง)",
 data: typeValues
 }]
 }
-}
-);
+});
 
-
-// Teacher Chart
-teacherChart = new Chart(
-document.getElementById("teacherChart"),
-{
+// Teacher
+teacherChart = new Chart(document.getElementById("teacherChart"), {
 type: "bar",
 data: {
 labels: teacherLabels,
@@ -144,11 +125,9 @@ label: "Waste (ถัง)",
 data: teacherValues
 }]
 }
-}
-);
+});
 
 }
-
 
 // ===============================
 // FILTER (1-3-6 เดือน)
