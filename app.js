@@ -40,7 +40,11 @@ console.error("API ERROR:", err);
 document.body.innerHTML =
 "<h2 style='color:red'>โหลดข้อมูลไม่สำเร็จ</h2>";
 });
-
+if (!data || data.length === 0) {
+document.getElementById("tableData").innerHTML =
+"<tr><td colspan='5'>ไม่มีข้อมูล</td></tr>";
+return;
+}
 
 // ===============================
 // DASHBOARD
