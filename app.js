@@ -93,19 +93,25 @@ teacherMap[item.teacher] = (teacherMap[item.teacher] || 0) + item.amount;
 
 });
 
-let typeLabels = Object.keys(typeMap);
-let typeValues = Object.values(typeMap);
+// เรียงมาก → น้อย (สำคัญมากสำหรับผู้บริหาร)
+let typeSorted = Object.entries(typeMap)
+.sort((a,b)=>b[1]-a[1]);
 
-let teacherLabels = Object.keys(teacherMap);
-let teacherValues = Object.values(teacherMap);
+let teacherSorted = Object.entries(teacherMap)
+.sort((a,b)=>b[1]-a[1]);
 
-// destroy old chart
+let typeLabels = typeSorted.map(i=>i[0]);
+let typeValues = typeSorted.map(i=>i[1]);
+
+let teacherLabels = teacherSorted.map(i=>i[0]);
+let teacherValues = teacherSorted.map(i=>i[1]);
+
 if(typeChart) typeChart.destroy();
 if(teacherChart) teacherChart.destroy();
 
-// Waste Type
+// Waste Type (Pie chart → อ่านง่ายขึ้น)
 typeChart = new Chart(document.getElementById("typeChart"), {
-type: "bar",
+type: "pie",
 data: {
 labels: typeLabels,
 datasets: [{
@@ -115,7 +121,7 @@ data: typeValues
 }
 });
 
-// Teacher
+// Teacher (Bar chart)
 teacherChart = new Chart(document.getElementById("teacherChart"), {
 type: "bar",
 data: {
@@ -128,7 +134,6 @@ data: teacherValues
 });
 
 }
-
 // ===============================
 // FILTER (1-3-6 เดือน)
 // ===============================
@@ -143,9 +148,11 @@ let now = new Date();
 
 let filtered = rawData.filter(item => {
 
+if(!item.date) return false;
+
 let d = new Date(item.date);
 
-if(!d.getTime()) return false;
+if(isNaN(d)) return false;
 
 let diff = (now - d) / (1000 * 60 * 60 * 24);
 
