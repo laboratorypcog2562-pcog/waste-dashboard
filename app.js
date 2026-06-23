@@ -4,18 +4,27 @@ const API_URL =
 let rawData = [];
 let filteredData = [];
 
-// โหลดข้อมูล
 fetch(API_URL)
 .then(res => res.json())
 .then(data => {
 
-rawData = data;
-filteredData = data;
+rawData = data.map(item => {
 
-renderDashboard(data);
+return {
+date: item["วันที่บันทึก"] || item[" วันที่บันทึก  "] || "",
+teacher: item["อาจารย์"] || "",
+type: item["Waste type"] || "",
+amount: Number(item["Amount"] || 0),
+liter: Number(item["Total_Liter"] || item["Container"] || 0)
+};
 
 });
 
+filteredData = rawData;
+
+renderDashboard(rawData);
+
+});
 
 // ===============================
 // RENDER DASHBOARD
