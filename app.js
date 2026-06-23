@@ -60,7 +60,7 @@ totalLiter += item.amount * item.liter;
 
 // KPI DISPLAY
 document.getElementById("totalContainer").innerText =
-totalContainer + "ถัง";
+totalContainer + " ถัง";
 
 document.getElementById("totalLiter").innerText =
 totalLiter + " L";
@@ -69,6 +69,39 @@ document.getElementById("totalRecord").innerText =
 data.length;
 
 
+// ================= TOP 5 TEACHERS =================
+let teacherMap = {};
+
+data.forEach(item => {
+
+let name = item.teacher || "ไม่ระบุ";
+
+teacherMap[name] =
+(teacherMap[name] || 0) + item.amount;
+
+});
+
+let topTeachers = Object.entries(teacherMap)
+.sort((a,b)=>b[1]-a[1])
+.slice(0,5);
+
+
+// HTML OUTPUT
+let topHTML = "<h3>🏆 Top 5 อาจารย์</h3><ol>";
+
+topTeachers.forEach(t => {
+topHTML += `<li>${t[0]} - ${t[1]} ถัง</li>`;
+});
+
+topHTML += "</ol>";
+
+// ต้องมี div นี้ใน HTML
+document.getElementById("topBox").innerHTML = topHTML;
+
+
+// 👉 สำคัญ: ต้องเรียก chart ต่อท้าย
+buildCharts(data);
+}
 // TABLE
 let html = "";
 
