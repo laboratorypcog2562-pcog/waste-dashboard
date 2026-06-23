@@ -60,10 +60,10 @@ totalLiter += item.amount * item.liter;
 
 // KPI DISPLAY
 document.getElementById("totalContainer").innerText =
-totalContainer + " ถัง";
+totalContainer + "ถัง";
 
 document.getElementById("totalLiter").innerText =
-totalLiter + " L";
+totalLiter + "L";
 
 document.getElementById("totalRecord").innerText =
 data.length;
